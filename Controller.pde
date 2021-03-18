@@ -96,9 +96,15 @@ public class Controller {
     ArrayList<PVector> queue = new ArrayList<PVector>();
     boolean[][] checked = new boolean[horSqrs][verSqrs];
 
-    // Primer nodo, cabeza de la serpiente
-    int[] firstNode = {int(currentSnake.pos[0].x/scl), int(currentSnake.pos[0].y/scl)};
-    PVector currentNode = new PVector(currentSnake.pos[0].x, currentSnake.pos[0].y);
+
+    //int[] firstNode = {int(currentSnake.pos[0].x/scl), int(currentSnake.pos[0].y/scl)};
+    //PVector currentNode = new PVector(currentSnake.pos[0].x, currentSnake.pos[0].y);
+    
+    int[] firstNode = {destinyX, destinyY};
+    PVector currentNode = new PVector(destinyX, destinyY);
+    
+    
+    
     
     // Inicializar todos los nodos con un valor infinito, excepto el primero, que es 0
     for (int i = 0; i < horSqrs; ++i) {
@@ -147,24 +153,30 @@ public class Controller {
         
       }
       
-      // Imprimir una versión del mapa del juego en la consola con el valor de los nodos
-      if( (int(horIndex) == destinyX && int(verIndex) == destinyY) || queue.size() == 0) {
-        
+      
+
+      //if( (int(horIndex) == destinyX && int(verIndex) == destinyY) || queue.size() == 0) {
+      if(  (int(horIndex) == int(currentSnake.pos[0].x/scl) && int(verIndex) == int(currentSnake.pos[0].y/scl)) || queue.size() == 0) {  
         somethingInQueue = false;
         if(print) {
           
           println("===================================================");
           println("===================================================");
-          printScreen(nodes);
+          //printScreen(nodes);
           
         }
       }
     }
+    //println(mainSearch);
+    //println("===================================================");
 
     /* Habiendo asignado a todos los nodos un valor, comienza a volverse desde el nodo
        con la comida (destinyX, destinyY) hasta la cabeza de la serpiente */
     ArrayList<PVector> tracebackNodes = new ArrayList<PVector>();
-    int[] tracebackNode = {destinyX, destinyY};
+    ArrayList<PVector> tracebackNodesReverse = new ArrayList<PVector>();
+    //int[] tracebackNode = {destinyX, destinyY};
+    
+    int[] tracebackNode = {int(currentSnake.pos[0].x/scl), int(currentSnake.pos[0].y/scl)};
     tracebackNodes = new ArrayList<PVector>();
     tracebackNodes.add(new PVector(tracebackNode[0], tracebackNode[1]));
     boolean closed = false;
@@ -182,7 +194,17 @@ public class Controller {
     }
 
     renderingMainSearch = true; // cuando la búsqueda se acaba de hacer, se usan los siguientes frames para dibujarla
-    return tracebackNodes; // si no encuentra un camino, esto retorna vacío
+    println(tracebackNodes);
+    println(destinyX, destinyY);
+    println(int(currentSnake.pos[0].x/scl), int(currentSnake.pos[0].y/scl));
+
+    
+    for(i = tracebackNodes.size()-1 ; i>=0;i--){
+      tracebackNodesReverse.add(  tracebackNodes.get(i) );
+    }
+      
+    
+    return tracebackNodesReverse; // si no encuentra un camino, esto retorna vacío
   }
 
   int checkSideNode(int checked, int checkTo, int checkHor, int checkVer, int cValue, int[][] nodes, ArrayList<PVector> queue, Snake cSnake) {
@@ -258,10 +280,10 @@ public class Controller {
       rect(mainSearch.get(0).x*scl + 1, mainSearch.get(0).y*scl + 1, scl - 1, scl - 1);
       if(mainSearch.get(0).x*scl == food_pos.x && mainSearch.get(0).y*scl == food_pos.y) {
         fill(shortpathcol);
-        frameRate(5);
-        for (PVector place : mainPathGeneral) {
+        frameRate(1);
+        for (int i= mainPathGeneral.size()-1;i >=0;i--) {
           
-          rect(place.x*scl + 1, place.y*scl + 1, scl - 1, scl - 1);
+          rect(mainPathGeneral.get(i).x*scl + 1, mainPathGeneral.get(i).y*scl + 1, scl - 1, scl - 1);
                 
         }
         
